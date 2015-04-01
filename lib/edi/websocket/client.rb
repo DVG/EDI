@@ -3,10 +3,11 @@ require 'eventmachine'
 
 module Websocket
   class Client
-    attr_accessor :ws_url, :client, :id
+    attr_accessor :ws_url, :client, :id, :connected
 
     def initialize
       self.id = 1
+      self.connected = false
     end
 
     def connect
@@ -20,6 +21,7 @@ module Websocket
         self.client = Faye::WebSocket::Client.new(ws_url)
 
         client.on :open do |event|
+          self.connected = true
           puts "EDI is now online"
         end
 
@@ -49,6 +51,10 @@ module Websocket
       end
       client.send Slack::WebsocketOutgoingMessage.new(text: message, channel: channel_id, id: id).to_json
       increment_id
+    end
+
+    def connected?
+      connected
     end
 
 private
