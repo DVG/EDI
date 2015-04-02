@@ -1,0 +1,52 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://numbersapi.com/random
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.4.6 (Ubuntu)
+      Date:
+      - Thu, 02 Apr 2015 01:33:56 GMT
+      Content-Type:
+      - text/plain; charset="UTF-8"; charset=utf-8
+      Content-Length:
+      - '70'
+      Connection:
+      - keep-alive
+      X-Powered-By:
+      - Express
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - X-Requested-With
+      X-Numbers-Api-Number:
+      - '115'
+      X-Numbers-Api-Type:
+      - trivia
+      Pragma:
+      - no-cache
+      Cache-Control:
+      - no-cache
+      Expires:
+      - '0'
+    body:
+      encoding: UTF-8
+      string: 115 is the atomic number of an element temporarily called ununpentium.
+    http_version: 
+  recorded_at: Thu, 02 Apr 2015 01:33:41 GMT
+recorded_with: VCR 2.9.3

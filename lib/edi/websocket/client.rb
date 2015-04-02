@@ -21,7 +21,7 @@ module Websocket
         self.client = Faye::WebSocket::Client.new(ws_url)
 
         client.on :open do |event|
-          self.connected = true
+          @connected = true
           puts "EDI is now online"
         end
 

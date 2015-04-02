@@ -1,5 +1,5 @@
 {
-  "url": "/",
+  "url": "ws://localhost:9292",
   "channels": [
     {
       "id": "C1327481",

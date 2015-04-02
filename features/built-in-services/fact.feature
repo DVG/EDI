@@ -1,3 +1,4 @@
+@vcr
 Feature: Fact Service
 
 
