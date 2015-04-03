@@ -59,8 +59,19 @@ WebSocketSteps = RSpec::EM.async_steps do
     callback.call
   end
 
-  def listen_for_message(&callback)
+  def edi_listen_for_message(&callback)
     @edi.add_event_listener('message', lambda { |e| @message = e.data })
+    start = Time.now
+    timer = EM.add_periodic_timer 0.1 do
+      if @message or Time.now.to_i - start.to_i > 5
+        EM.cancel_timer(timer)
+        callback.call
+      end
+    end
+  end
+
+  def slack_listen_for_message(&callback)
+    @slack.socket.add_event_listener('message', lambda { |e| @message = e.data })
     start = Time.now
     timer = EM.add_periodic_timer 0.1 do
       if @message or Time.now.to_i - start.to_i > 5
@@ -116,8 +127,9 @@ describe "EDI Fact" do
   it "responds with a fact" do
     connect_edi url
     send_message "EDI, fact"
-    listen_for_message
-    listen_for_message
+    edi_listen_for_message
+    sleep 1
+    slack_listen_for_message
     chatroom_has_message "183"
   end
 end

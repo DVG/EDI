@@ -33,7 +33,7 @@ class FakeSlack
     debugger
     messages.include? message
   end
-
+  
 private
   def listen_thin(port, tls)
     Rack::Handler.get('thin').run(self, :Port => port) do |s|
