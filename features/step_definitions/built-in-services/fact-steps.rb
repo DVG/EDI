@@ -13,5 +13,5 @@ When(/^someone sends the message "(.+)"$/) do |message|
 end
 
 Then(/^EDI will respond with a random fact$/) do
-    expect(@slack).to have_message "115 is the atomic number of an element temporarily called ununpentium."
+  expect(@slack).to have_message "115 is the atomic number of an element temporarily called ununpentium."
 end

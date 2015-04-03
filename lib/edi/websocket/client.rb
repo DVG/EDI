@@ -5,26 +5,23 @@ module Websocket
   class Client
     attr_accessor :ws_url, :client, :id, :connected
 
-    def initialize
-      self.id = 1
-      self.connected = false
+    def initialize(url: nil)
+      @id = 1
+      @ws_url = url
     end
 
     def connect
       connection = EDI.get("https://slack.com/api/rtm.start?token=#{EDI.bot_token}").response
-      connection["channels"].each do |c|
-        EDI.add_channel Slack::Channel.new(name: c["name"], id: c["id"])
+      if connection["channels"]
+        connection["channels"].each do |c|
+          EDI.add_channel Slack::Channel.new(name: c["name"], id: c["id"])
+        end
       end
-      self.ws_url = connection["url"]
+      @ws_url ||= connection["url"] # memoized pattern for testing convenience
       EM.run {
 
         self.client = Faye::WebSocket::Client.new(ws_url)
-
-        client.on :open do |event|
-          @connected = true
-          puts "EDI is now online"
-        end
-
+        
         # Respond to Messages
         client.on :message do |event|
           incoming_message = Slack::WebsocketIncomingMessage.new(event.data)
@@ -51,10 +48,6 @@ module Websocket
       end
       client.send Slack::WebsocketOutgoingMessage.new(text: message, channel: channel_id, id: id).to_json
       increment_id
-    end
-
-    def connected?
-      connected
     end
 
 private

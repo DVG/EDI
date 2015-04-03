@@ -1,6 +1,5 @@
-@vcr
+@vcr @async
 Feature: Fact Service
-
 
   Scenario: Request a Fact
     Given the fact service is enabled

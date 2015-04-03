@@ -1,39 +1,18 @@
+require 'rspec'
 require 'edi'
-require 'cucumber'
-require 'faye/websocket'
-require 'rack'
 require 'byebug'
-require 'cucumber/rspec/doubles'
-require_relative './slack_manager'
 require 'vcr'
-require 'webmock/cucumber'
-require "em-synchrony"
-
-Before do
-  @slack = FakeSlack.new
-  stub_request(:get, "https://slack.com/api/rtm.start?token=#{ENV["SLACK_EDI_TOKEN"]}").
-    to_return(:status => 200, :body => json_response("slack_connection"), :headers => {})
-  stub_request(:any, "ws://localhost:9292").to_rack(@slack)
-  @edi_thread = Thread.new do
-    EDI.websocket.connect
-  end
-  sleep 1
-end
-
-Around("@async") do |scenario, blk|
-  EM.synchrony do
-    blk.call
-    EM.stop
-  end
-end
-
+require 'support/fake_slack'
+require 'rspec/em'
+require 'webmock/rspec'
 
 def json_response(file_name)
-  File.open(File.dirname(__FILE__) + '/fixtures/' + file_name + ".json", 'rb').read
+  File.open(File.dirname(__FILE__) + '/support/fixtures/' + file_name + ".json", 'rb').read
 end
 
 VCR.configure do |config|
-  config.cassette_library_dir = "features/support/fixtures/vcr_cassettes"
+  config.cassette_library_dir = "spec/support/fixtures/vcr_cassettes"
+  config.configure_rspec_metadata!
   config.hook_into :webmock
   config.filter_sensitive_data("<SLACK_EDI_TOKEN>") { ENV["SLACK_EDI_TOKEN"] }
   config.filter_sensitive_data("<DEFAULT_LOCATION>") { ENV["DEFAULT_LOCATION"] }
@@ -47,12 +26,5 @@ VCR.configure do |config|
   config.filter_sensitive_data("TWITTER_CONSUMER_SECRET") { ENV["TWITTER_CONSUMER_SECRET"] }
   config.filter_sensitive_data("TWITTER_HANDLE") { ENV["TWITTER_HANDLE"] }
   config.filter_sensitive_data("TWITTER_TOKEN_SECRET") { ENV["TWITTER_TOKEN_SECRET"] }
-end
-
-VCR.cucumber_tags do |t|
-  t.tag  '@vcr', :use_scenario_name => true
-end
-
-at_exit do
-  EventMachine.stop
+  config.allow_http_connections_when_no_cassette = true
 end

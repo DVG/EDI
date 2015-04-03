@@ -54,8 +54,8 @@ module EDI
       self.config.environment = ActiveSupport::StringInquirer.new(environment)
     end
 
-    def websocket
-      @websocket ||= Websocket::Client.new
+    def websocket(url: nil)
+      @websocket ||= Websocket::Client.new(url: url)
     end
 
     def runner

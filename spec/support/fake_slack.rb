@@ -1,4 +1,7 @@
+require 'rack'
 class FakeSlack
+  Faye::WebSocket.load_adapter('thin')
+  Thin::Logging.silent = true
   attr_accessor :socket, :messages
 
   def initialize
@@ -7,7 +10,10 @@ class FakeSlack
 
   def call(env)
     self.socket = Faye::WebSocket.new(env, ["echo"])
-    socket.onmessage = ->(event) { socket.send(event.data) }
+    socket.onmessage =  lambda do |event|
+      @messages << event.data
+      socket.send(event.data)
+    end
     socket.rack_response
   end
 
@@ -15,18 +21,16 @@ class FakeSlack
   end
 
   def listen(port, backend, tls = false)
-    case backend
-    when :thin then listen_thin(port, tls)
-    end
+    listen_thin(port, tls)
   end
 
   def stop
+    @messages = []
     @server.stop
   end
 
   def has_message?(message)
-    puts "Checking Slack for message #{message}"
-    puts "Messages: #{messages}"
+    debugger
     messages.include? message
   end
 
