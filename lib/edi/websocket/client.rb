@@ -6,7 +6,7 @@ module Websocket
     attr_accessor :ws_url, :client, :id, :connected
 
     def initialize(url: nil)
-      @id = 1
+      @id = 0
       @ws_url = url
     end
 
@@ -21,17 +21,16 @@ module Websocket
       EM.run {
 
         self.client = Faye::WebSocket::Client.new(ws_url)
-        
+
         # Respond to Messages
         client.on :message do |event|
           incoming_message = Slack::WebsocketIncomingMessage.new(event.data)
           if incoming_message.should_respond?
-            puts "EDI received message #{incoming_message.text} in channel #{incoming_message.channel}"
+            EDI.logger.info "EDI received message #{incoming_message.text} in channel #{incoming_message.channel}"
             response_text = ""
             service = Proc.new { response_text = EDI.runner.new(message: incoming_message).execute }
             response = Proc.new { client.send Slack::WebsocketOutgoingMessage.new(text: response_text, channel: incoming_message.channel, id: id).to_json if response_text }
             EM.defer service, response
-            increment_id
           end
         end
 
@@ -47,7 +46,6 @@ module Websocket
         channel_id = lookup_channel_by_name(channel_name).id
       end
       client.send Slack::WebsocketOutgoingMessage.new(text: message, channel: channel_id, id: id).to_json
-      increment_id
     end
 
 private
@@ -57,8 +55,8 @@ private
     end
 
     # There has to be a way to do this better
-    def increment_id
-      self.id += 1
+    def id
+      @id += 1
     end
   end
 end

@@ -7,6 +7,7 @@ require 'edi/dsl'
 require 'edi/postable'
 require 'edi/environment'
 require 'edi/service'
+require 'edi/logger'
 require 'edi/exceptions'
 require 'edi/interpreter'
 require 'edi/refinements'
@@ -72,6 +73,10 @@ module EDI
 
     def channels
       @channels ||= []
+    end
+
+    def logger
+      EDI::Logger
     end
 
     def add_channel(channel)

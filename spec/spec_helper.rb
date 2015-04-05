@@ -8,6 +8,7 @@ require 'vcr'
 require_relative './support/shared_contexts/service'
 require_relative './support/shared_contexts/server'
 require 'edi/test_support/test_support'
+require 'feature_spec_helper'
 
 include Rack::Test::Methods
 include EDI::TestSupport

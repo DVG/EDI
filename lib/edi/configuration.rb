@@ -25,6 +25,9 @@ module EDI
 
         # Bot Token Variable
         config.bot_token = ENV["SLACK_EDI_TOKEN"]
+
+        # Log Level. Valid Values are :development, :production, :silent
+        config.log_level = :debug
       end
     end
   end

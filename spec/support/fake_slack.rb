@@ -11,7 +11,7 @@ class FakeSlack
   def call(env)
     self.socket = Faye::WebSocket.new(env, ["echo"])
     socket.onmessage =  lambda do |event|
-      @messages << event.data
+      @messages << Slack::WebsocketIncomingMessage.new(event.data)
       socket.send(event.data)
     end
     socket.rack_response
@@ -31,9 +31,9 @@ class FakeSlack
 
   def has_message?(message)
     debugger
-    messages.include? message
+    messages.find_all { |m| m.text == message}.any?
   end
-  
+
 private
   def listen_thin(port, tls)
     Rack::Handler.get('thin').run(self, :Port => port) do |s|
