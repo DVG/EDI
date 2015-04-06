@@ -20,6 +20,7 @@ require 'edi/application'
 require 'edi/utilities/array_responder'
 require 'edi/schedule'
 require 'edi/job'
+require 'edi/logger'
 require 'edi/websocket'
 module EDI
   class << self
@@ -80,6 +81,10 @@ module EDI
 
     def send_message(message, channel_name: "general", channel_id: nil)
       EDI.websocket.send_message(message, channel_name: channel_name, channel_id: channel_id)
+    end
+
+    def logger
+      @logger ||= EDI::Logger.new
     end
 
   end

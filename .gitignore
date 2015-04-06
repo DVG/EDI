@@ -22,3 +22,4 @@ tmp
 mkmf.log
 variables.sh
 .vagrant/
+log/
