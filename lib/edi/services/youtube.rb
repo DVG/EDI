@@ -33,7 +33,7 @@ private
   end
 
   def order
-    "order=rating"
+    "order=relevance"
   end
 
   def key
