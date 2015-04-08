@@ -5,8 +5,12 @@ class Youtube < EDI::Service
   before_invoke :extract_search_term
 
   def run
-    response = EDI.get("#{url}?#{params}").response
-    "https://youtu.be/#{response["items"].first["id"]["videoId"]}"
+    response = EDI.get("#{url}?#{params}")
+    if response.ok?
+      "https://youtu.be/#{response.response["items"].first["id"]["videoId"]}"
+    else
+      EDI::Logger.debug response.response
+    end
   end
 
 private
