@@ -7,7 +7,7 @@ class ServiceRunner
 
     def execute
       self.service = EDI::Interpreter.new(message).determine_service.new(message)
-      puts "Service: #{service.class} invoked"
+      EDI::Logger.info "Service: #{service.class} invoked"
       begin
         _run_service
       rescue EDI::UnfitEnvironmentException => e
@@ -25,5 +25,5 @@ private
       service.validate_environment
       service.invoke
     end
-    
+
 end

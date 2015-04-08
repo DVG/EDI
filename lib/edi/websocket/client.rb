@@ -22,14 +22,14 @@ module Websocket
         self.client = Faye::WebSocket::Client.new(ws_url)
 
         client.on :open do |event|
-          puts "EDI is now online"
+          EDI::Logger.info "EDI is now online"
         end
 
         # Respond to Messages
         client.on :message do |event|
           incoming_message = Slack::WebsocketIncomingMessage.new(event.data)
           if incoming_message.should_respond?
-            puts "EDI received message #{incoming_message.text} in channel #{incoming_message.channel}"
+            EDI::Logger.info "EDI received message #{incoming_message.text} in channel #{incoming_message.channel}"
             response_text = ""
             service = Proc.new { response_text = EDI.runner.new(message: incoming_message).execute }
             response = Proc.new { client.send Slack::WebsocketOutgoingMessage.new(text: response_text, channel: incoming_message.channel, id: id).to_json if response_text }

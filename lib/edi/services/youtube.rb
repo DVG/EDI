@@ -6,7 +6,6 @@ class Youtube < EDI::Service
 
   def run
     response = EDI.get("#{url}?#{params}").response
-    puts "Youtube Response: #{response.code}"
     "https://youtu.be/#{response["items"].first["id"]["videoId"]}"
   end
 

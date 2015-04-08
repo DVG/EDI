@@ -13,7 +13,7 @@ module EDI
 
     desc "start", "Bootup the EDI Application"
     def start(*args)
-      puts "Starting EDI Slackbot"
+      EDI::Logger.info "Starting EDI Slackbot"
       run_command("ruby boot.rb")
     end
 
